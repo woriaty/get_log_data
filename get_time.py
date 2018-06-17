@@ -1,6 +1,6 @@
 #coding=utf-8
-f = open("out.csv","w")
-f.write('num' + ',' + 'start time' + ',' + 'end time' + '\n')  #write title
+
+import os
 
 def find_match(line, string):
     match = ''
@@ -11,20 +11,39 @@ def find_match(line, string):
         match += line[i]
     return match
 
-def get_time(file_name):
+def get_time(file):
     num = 0
-    for line in open(file_name + ".log","r"):
+    value = ''
+    for line in open(file,"r"):
         num += 1
         try:
             start_time = find_match(line, "start time")
-            print("start time = %s" % start_time)
+            #print("start time = %s" % start_time)
             end_time = find_match(line, "end time")
-            print("end time = %s" % end_time)
+            #print("end time = %s" % end_time)
         except ValueError:
             num -= 1
             continue
-        f.write(str(num) + ',' + start_time + ',' + end_time + ',' + '\n')
-    f.close()
+        value += (str(num) + ',' + start_time + ',' + end_time + ',' + '\n')
+    return value
+
+def find_exist(file, files):
+    pos = file.find('.log')
+    for i in range(len(files)):
+        if files[i] == file[:pos]+ ".csv":
+            return -1
+    return 0
 
 if __name__ == "__main__":
-    get_time("test")
+    files = os.listdir()
+    for i in range(len(files)):
+        pos = files[i].find('.log')
+        if pos != -1:
+            print("match file: %s" % files[i])
+            if find_exist(files[i], files) == -1:
+                print("file %s.csv exist, ignored..." % files[i][:pos])
+                continue
+            f = open(files[i][:pos]+ ".csv","w")
+            f.write('num' + ',' + 'start time' + ',' + 'end time' + '\n')  #write title
+            f.write(get_time(files[i]))
+            f.close()
