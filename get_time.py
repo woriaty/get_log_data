@@ -28,22 +28,22 @@ def get_time(file):
     return value
 
 def find_exist(file, files):
-    pos = file.find('.log')
     for i in range(len(files)):
-        if files[i] == file[:pos]+ ".csv":
-            return -1
+        if files[i] == file + ".csv":
+            return 1
     return 0
 
 if __name__ == "__main__":
     files = os.listdir()
     for i in range(len(files)):
         pos = files[i].find('.log')
+        file_name = files[i][:pos]
         if pos != -1:
             print("match file: %s" % files[i])
-            if find_exist(files[i], files) == -1:
-                print("file %s.csv exist, ignored..." % files[i][:pos])
+            if find_exist(file_name, files):
+                print("file %s.csv exist, ignored..." % file_name)
                 continue
-            f = open(files[i][:pos]+ ".csv","w")
+            f = open(file_name + ".csv","w")
             f.write('num' + ',' + 'start time' + ',' + 'end time' + '\n')  #write title
             f.write(get_time(files[i]))
             f.close()
